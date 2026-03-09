@@ -416,5 +416,15 @@ themeToggle.onclick=(e)=>{
 };
 </script>
 
+// used dom here
+<script>
+  
+const titleElement = document.querySelector('main > section:first-child div strong');
+titleElement.textContent = 'Updated Weekly Timetable';
+
+const subtitleElement = document.querySelector('main > section:first-child div div');
+subtitleElement.textContent = 'Semester 6 - Computer Science (Modified with DOM)';
+</script>
+
 </body>
 </html>
