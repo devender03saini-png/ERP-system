@@ -308,18 +308,28 @@ themeToggle.onclick=(e)=>{
  document.body.setAttribute("data-theme",current==="dark"?"light":"dark");
 };
 
-const notices=[
- "Mid-sem exam form closes Friday at 5 PM.",
- "Hackathon registration open.",
- "Library open till 9 PM.",
- "Fee portal maintenance Saturday."
-];
 
-let i=0;
-setInterval(()=>{
- noticeText.textContent=notices[i];
- i=(i+1)%notices.length;
-},3500);
+
+let notices = [];
+let i = 0;
+
+const xhr = new XMLHttpRequest();
+
+xhr.open("GET", "notices.json", true);
+
+xhr.onload = function () {
+  if (xhr.status === 200) {
+    const data = JSON.parse(xhr.responseText);
+    notices = data.notices;
+
+    setInterval(() => {
+      document.getElementById("noticeText").textContent = notices[i];
+      i = (i + 1) % notices.length;
+    }, 3500);
+  }
+};
+
+xhr.send();
 </script>
 
 </body>
