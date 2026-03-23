@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>College ERP - Fees</title>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
 <style>
 :root{
   --bg1:#e6d197;
@@ -40,14 +38,17 @@ body{
     linear-gradient(135deg,var(--bg1),var(--bg2));
 }
 
+/* IMPORTANT FIX */
 main{
   padding:30px;
   display:flex;
   flex-direction:column;
   gap:25px;
+  position:relative;
+  z-index:1;
 }
 
-/* glass card */
+/* glass */
 .glass{
   background:var(--glass);
   border:1px solid var(--glass-border);
@@ -57,14 +58,19 @@ main{
   padding:20px;
 }
 
-/* navbar */
+/* top bar */
 .top-strip{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  position:relative;
+  z-index:1000;
 }
 
-.profile-wrap{position:relative;}
+.profile-wrap{
+  position:relative;
+  z-index:2000;
+}
 
 .profile-btn{
   background:var(--glass);
@@ -93,40 +99,82 @@ main{
 .modern-sidebar{
   position:absolute;
   right:0;
-  top:65px;
-  width:240px;
+  top:calc(100% + 8px);
+  width:250px;
+
   background:var(--glass);
   border:1px solid var(--glass-border);
   border-radius:16px;
   padding:15px;
+
   display:none;
+  z-index:99999; /* 🔥 FIXED */
+
+  box-shadow:0 30px 70px rgba(0,0,0,.35);
+
+  opacity:0;
+  transform:translateY(-10px);
+  transition:.25s ease;
 }
 
-.modern-sidebar.open{display:block;}
+.modern-sidebar.open{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* arrow */
+.modern-sidebar::before{
+  content:"";
+  position:absolute;
+  top:-6px;
+  right:20px;
+  width:12px;
+  height:12px;
+  background:var(--glass);
+  transform:rotate(45deg);
+  border-left:1px solid var(--glass-border);
+  border-top:1px solid var(--glass-border);
+}
 
 .menu-link{
   display:block;
-  padding:10px;
+  padding:10px 12px;
   margin-bottom:8px;
   border-radius:10px;
   text-decoration:none;
   font-weight:600;
   color:var(--text);
   background:rgba(0,0,0,.05);
+  transition:.2s;
+}
+
+body[data-theme="dark"] .menu-link{
+  background:rgba(255,255,255,.08);
 }
 
 .menu-link:hover{
   background:var(--accent);
   color:white;
+  transform:translateX(4px);
 }
 
-/* fees rows */
+.divider{
+  height:1px;
+  background:var(--glass-border);
+  margin:12px 0;
+}
+
+/* fees */
 .fee-row{
   display:flex;
   justify-content:space-between;
   padding:12px;
   border-bottom:1px solid var(--glass-border);
-  cursor:pointer;
+}
+
+.fee-row:last-child{
+  border-bottom:none;
 }
 
 .paid{color:green;font-weight:600;}
@@ -139,6 +187,7 @@ button{
   cursor:pointer;
   background:var(--accent);
   color:white;
+  margin-right:10px;
 }
 </style>
 </head>
@@ -167,7 +216,10 @@ Student Name
 <a href="marks-records.html" class="menu-link">📊 Marks</a>
 <a href="attendance.html" class="menu-link">📌 Attendance</a>
 <a href="notices.html" class="menu-link">📢 Notices</a>
-<hr>
+<a href="settings.html" class="menu-link">⚙ Settings</a>
+
+<div class="divider"></div>
+
 <a href="#" id="themeToggle" class="menu-link">🌙 Toggle Theme</a>
 </div>
 </div>
@@ -210,65 +262,41 @@ Student Name
 </main>
 
 <script>
+const profileBtn = document.getElementById("profileBtn");
+const roleMenu = document.getElementById("roleMenu");
+const themeToggle = document.getElementById("themeToggle");
 
-/* dropdown + theme */
-const profileBtn=document.getElementById("profileBtn");
-const roleMenu=document.getElementById("roleMenu");
-const themeToggle=document.getElementById("themeToggle");
-
-profileBtn.onclick=()=>roleMenu.classList.toggle("open");
-
-document.addEventListener("click",e=>{
- if(!roleMenu.contains(e.target)&&!profileBtn.contains(e.target)){
-   roleMenu.classList.remove("open");
- }
+// toggle dropdown
+profileBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  roleMenu.classList.toggle("open");
 });
 
-themeToggle.onclick=(e)=>{
- e.preventDefault();
- const current=document.body.getAttribute("data-theme");
- document.body.setAttribute("data-theme",current==="dark"?"light":"dark");
+// prevent closing when clicking inside
+roleMenu.addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+
+// close on outside click
+document.addEventListener("click", () => {
+  roleMenu.classList.remove("open");
+});
+
+// theme toggle
+themeToggle.addEventListener("click", (e) => {
+  e.preventDefault();
+  const current = document.body.getAttribute("data-theme");
+  document.body.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+});
+
+// show/hide fees
+document.getElementById("hideFees").onclick = () => {
+  document.getElementById("feePanel").style.display = "none";
 };
 
-</script>
-
-
-<!--Second question starts here -->
-<script>
-
-$(document).ready(function(){
-
-$("#profileBtn").click(function(){
-$("#roleMenu").slideToggle();
-});
-
-$(".fee-row").dblclick(function(){
-$(this).css("background","#ffd27f");
-});
-
-$(".fee-row").mouseover(function(){
-$(this).css("color","blue");
-});
-
-$(".fee-row").mouseenter(function(){
-$(this).css("font-weight","bold");
-});
-
-$(".fee-row").mouseleave(function(){
-$(this).css("color","");
-$(this).css("font-weight","");
-});
-
-$("#hideFees").click(function(){
-$("#feePanel").slideUp();
-});
-
-$("#showFees").click(function(){
-$("#feePanel").slideDown();
-});
-
-});
-
+document.getElementById("showFees").onclick = () => {
+  document.getElementById("feePanel").style.display = "block";
+};
 </script>
 
 </body>

@@ -327,7 +327,207 @@ xhr.onload = function () {
       i = (i + 1) % notices.length;
     }, 3500);
   }
+};<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>College ERP - Home</title>
+
+<style>
+/* ===== YOUR ORIGINAL CSS (UNCHANGED) ===== */
+:root{
+  --bg1:#e6d197;
+  --bg2:#eddcb0;
+  --glass:rgba(255,255,255,.55);
+  --glass-border:rgba(255,255,255,.8);
+  --text:#2c2411;
+  --sub:#6b5830;
+  --accent:#7f5a00;
+  --shadow:0 18px 40px rgba(0,0,0,.15);
+  --ok:#2f7a42;
+  --warn:#a06d07;
+  --gap:20px;
+}
+
+body[data-theme="dark"]{
+  --bg1:#1a1730;
+  --bg2:#2c2555;
+  --glass:rgba(255,255,255,.08);
+  --glass-border:rgba(255,255,255,.15);
+  --text:#f3efff;
+  --sub:#c8bcf5;
+  --accent:#d6c3ff;
+  --ok:#83e9a0;
+  --warn:#ffd06a;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 20%,rgba(255,255,255,.4),transparent 40%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+}
+
+main{
+  padding:30px;
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+}
+
+/* Glass */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(14px);
+  padding:20px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:var(--gap);
+}
+
+.card{grid-column:span 3;}
+.half{grid-column:span 6;}
+
+.label{color:var(--sub);}
+.value{font-size:1.4rem;font-weight:700;margin-top:6px;}
+
+/* ===== ADDED (SAFE) ===== */
+.big-widget{position:relative;}
+
+.widget-star{
+  position:absolute;
+  bottom:10px;
+  right:12px;
+  cursor:pointer;
+  font-size:14px;
+  opacity:.6;
+}
+.widget-star:hover{opacity:1;}
+
+.circle-menu{
+  position:absolute;
+  width:200px;
+  height:200px;
+  z-index:99999;
+}
+.circle-menu button{
+  position:absolute;
+  border:none;
+  border-radius:50%;
+  padding:8px;
+  background:var(--accent);
+  color:white;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<!-- SMALL CARDS -->
+<section class="grid">
+  <div class="glass card mini-widget"><div class="label">Today Classes</div><div class="value">5</div></div>
+  <div class="glass card mini-widget"><div class="label">Attendance</div><div class="value">88%</div></div>
+  <div class="glass card mini-widget"><div class="label">Pending Fee</div><div class="value">₹36,000</div></div>
+  <div class="glass card mini-widget"><div class="label">Current CGPA</div><div class="value">8.41</div></div>
+</section>
+
+<!-- TIMETABLE -->
+<section class="glass big-widget">
+  <span class="widget-star">⭐</span>
+  <h3>Today Timetable</h3>
+  <p>Original content stays</p>
+</section>
+
+<!-- FEES -->
+<section class="glass half big-widget">
+  <span class="widget-star">⭐</span>
+  <h3>Quarter Fee Status</h3>
+  <p>Original content stays</p>
+</section>
+
+<!-- TASKS -->
+<section class="glass half big-widget">
+  <span class="widget-star">⭐</span>
+  <h3>Important Tasks</h3>
+  <p>Original content stays</p>
+</section>
+
+</main>
+
+<script>
+
+/* ===== MINI SLIDE (no layout change) ===== */
+const miniData=[
+["Today Classes","5"],
+["Attendance","88%"],
+["Fees","₹36k"],
+["CGPA","8.4"],
+["Tasks","3"],
+["Notices","2"]
+];
+
+document.querySelectorAll(".mini-widget").forEach(w=>{
+let i=0;
+w.onclick=()=>{
+i=(i+1)%miniData.length;
+w.querySelector(".label").textContent=miniData[i][0];
+w.querySelector(".value").textContent=miniData[i][1];
 };
+});
+
+
+/* ===== STAR MENU ===== */
+document.querySelectorAll(".widget-star").forEach(star=>{
+star.onclick=(e)=>{
+e.stopPropagation();
+
+const menu=document.createElement("div");
+menu.className="circle-menu";
+
+const opts=["Timetable","Fees","Tasks","Attendance"];
+
+opts.forEach((o,i)=>{
+const btn=document.createElement("button");
+const angle=(i/opts.length)*2*Math.PI;
+
+btn.style.left=80+Math.cos(angle)*70+"px";
+btn.style.top=80+Math.sin(angle)*70+"px";
+btn.textContent=o;
+
+btn.onclick=()=>{
+star.parentElement.querySelector("h3").textContent=o;
+menu.remove();
+};
+
+menu.appendChild(btn);
+});
+
+menu.style.left=e.pageX-100+"px";
+menu.style.top=e.pageY-100+"px";
+
+document.body.appendChild(menu);
+document.addEventListener("click",()=>menu.remove(),{once:true});
+};
+});
+
+</script>
+
+</body>
+</html>
 
 xhr.send();
 </script>
